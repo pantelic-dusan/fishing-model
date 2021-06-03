@@ -3,51 +3,44 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
 K = 10000
-r = 0.5
-l = 0.5
-h = 0.75
-fishCatch = []  
-def lv(PG,t):
-    P = PG[0]
-    G = PG[1]
-    Pt = r*P*(1-(P/K))-g*P*G
-    Gt = l*g*P*G - h*G
-    return [Pt, Gt]
+
+def dP_dt(P,t=0):
+    Pt = r*P*(1-(P/K))-h*P
+    return Pt
 t = np.linspace(0,100)
-P0 = 1500
-G0 = 425
-g = 0.001
-averages = []
-intensities = []
 
-for i in range (0,40):
-    res = odeint(lv,[P0, G0], t)
-    fishCatch = g*res[:,0]*res[:,1]
-    averages.append(sum(fishCatch)/len(fishCatch))
-    intensities.append(g)
-    g *= 1.05
-plt.plot(intensities,averages,'r--', linewidth=2.0)
-plt.legend(["Ulov"])
+r = 0
+for i in range(0, 5):
+    averages = []
+    equilibriums = []
+    h = 0
+    for j in range(0, 101):
+        res = odeint(dP_dt,100, t)
+        h += 0.01
+        averages.append(sum(res[:,0]*h)/len(res[:,0]))
+        equilibriums.append(h)
+    plt.plot(equilibriums, averages)
+    r+=0.25
+plt.legend(["r=0.00", "r=0.25", "r=0.50", "r=0.75", "r=1.00"])
+plt.xlabel("Intenzitet ribolova")
+plt.ylabel("Kolicina ulovljene ribe")
+plt.title("P0=100")
 plt.show()
 
-g = 0.001
-averages = []
-intensities = []   
-for i in range (0,40):
-    res = odeint(lv,[P0, G0], t)
-    fishCatch = g*res[:,0]*res[:,1]
-    averages.append(sum(fishCatch)/len(fishCatch))
-    intensities.append(g)
-    g *= 0.95
- 
-plt.plot(intensities,averages,'r--', linewidth=2.0)
-plt.legend(["Ulov"])
+r = 0
+for i in range(0, 5):
+    averages = []
+    equilibriums = []
+    h = 0
+    for j in range(0, 101):
+        res = odeint(dP_dt,10000, t)
+        h += 0.01
+        averages.append(sum(res[:,0]*h)/len(res[:,0]))
+        equilibriums.append(h)
+    plt.plot(equilibriums, averages)
+    r+=0.25
+plt.legend(["r=0.00", "r=0.25", "r=0.50", "r=0.75", "r=1.00"])
+plt.xlabel("Intenzitet ribolova")
+plt.ylabel("Kolicina ulovljene ribe")
+plt.title("P0=10000")
 plt.show()
-
-g = 0.0003
-res = odeint(lv,[P0, G0], t)
-plt.plot(t,res[:,0],'r--', linewidth=2.0)
-plt.plot(t,res[:,1],'b-', linewidth=2.0)
-plt.legend(["Riba","Ribari"])
-plt.show()
-
