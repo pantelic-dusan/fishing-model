@@ -9,7 +9,10 @@ intensities = []
 equilibriums = []
 for i in range(0, 31):
     intensities.append(h)
-    equilibriums.append((K*(r-h))/r)
+    eq = (K*(r-h))/r
+    if eq<0:
+        eq = 0
+    equilibriums.append(eq)
     h+=0.05
 plt.plot(intensities,equilibriums)
 plt.ylabel("Vrednost tacke ekvilibrijuma")
